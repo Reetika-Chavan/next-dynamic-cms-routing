@@ -47,20 +47,34 @@ export async function getRouteData(path: string): Promise<RouteData | null> {
     // Normalize path (ensure it starts with /)
     // Handles both "blog/ai" and "/blog/ai" formats
     const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+    // Also try without leading slash (in case routing entry is stored without it)
+    const pathWithoutSlash = normalizedPath.slice(1);
 
     // Step 1: Find routing entry by URL path
-    const Query = Stack.ContentType("routing")
+    // Try with leading slash first, then without
+    let Query = Stack.ContentType("routing")
       .Query()
       .where("url_path", normalizedPath)
       .toJSON();
 
-    const result = await Query.find();
+    let result = await Query.find();
+    let entries = result[0] || [];
 
-    // Contentstack returns [entries, count]
-    const entries = result[0] || [];
+    // If not found, try without leading slash
+    if (!entries || entries.length === 0) {
+      Query = Stack.ContentType("routing")
+        .Query()
+        .where("url_path", pathWithoutSlash)
+        .toJSON();
+
+      result = await Query.find();
+      entries = result[0] || [];
+    }
 
     if (!entries || entries.length === 0) {
-      console.warn(`No routing entry found for path: ${normalizedPath}`);
+      console.warn(
+        `No routing entry found for path: ${normalizedPath} or ${pathWithoutSlash}`
+      );
       return null;
     }
 

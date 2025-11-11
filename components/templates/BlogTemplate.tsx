@@ -18,7 +18,7 @@ export default function BlogTemplate({ entry }: BlogTemplateProps) {
     <article className="max-w-4xl mx-auto px-4 py-8">
       {/* Blog Header */}
       <header className="mb-8">
-        <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">
+        <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white">
           {entry.title || "Untitled Blog Post"}
         </h1>
 
@@ -48,14 +48,14 @@ export default function BlogTemplate({ entry }: BlogTemplateProps) {
       <div className="prose prose-lg max-w-none">
         {entry.body && (
           <div
-            className="text-gray-700 leading-relaxed"
+            className="text-white leading-relaxed"
             dangerouslySetInnerHTML={{ __html: entry.body }}
           />
         )}
 
         {/* Optional: Add more blog-specific fields */}
         {entry.excerpt && (
-          <p className="text-xl text-gray-600 italic mt-4">{entry.excerpt}</p>
+          <p className="text-xl text-white italic mt-4">{entry.excerpt}</p>
         )}
       </div>
 
@@ -71,7 +71,7 @@ export default function BlogTemplate({ entry }: BlogTemplateProps) {
               {entry.categories.map((cat: string, idx: number) => (
                 <span
                   key={idx}
-                  className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
+                  className="px-3 py-1 bg-gray-100 text-white rounded-full text-sm"
                 >
                   {cat}
                 </span>
