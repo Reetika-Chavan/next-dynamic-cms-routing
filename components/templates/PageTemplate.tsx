@@ -4,11 +4,12 @@ interface PageTemplateProps {
   entry: PageEntry;
 }
 
-
 export default function PageTemplate({ entry }: PageTemplateProps) {
   return (
     <main className="p-8 text-center">
-      <h1 className="text-4xl font-bold mb-4">{entry.title || "Untitled"}</h1>
+      <h1 className="text-4xl font-bold mb-4 text-purple-600">
+        {entry.title || "Untitled"}
+      </h1>
 
       {entry.image?.url && (
         <img
@@ -18,7 +19,7 @@ export default function PageTemplate({ entry }: PageTemplateProps) {
         />
       )}
 
-      <p className="text-lg text-gray-700 max-w-2xl mx-auto">
+      <p className="text-lg text-purple-600 max-w-2xl mx-auto">
         {entry.body || ""}
       </p>
     </main>
