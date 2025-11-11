@@ -1,14 +1,51 @@
 import { Stack } from "./contentstack";
-import type { PageEntry, RoutingEntry } from "@/types/page";
+
+/**
+ * Page entry from Contentstack
+ */
+export interface PageEntry {
+  title?: string;
+  body?: string;
+  image?: {
+    url: string;
+  };
+  [key: string]: any; // Allow additional fields from different content types
+}
+
+/**
+ * Routing entry from Contentstack routing content type
+ */
+interface RoutingEntry {
+  url_path: string;
+  content_type_uid: string;
+  entry_uid: string;
+  template?: string; // Template name from routing entry (e.g., "blog", "page")
+}
+
+/**
+ * Route data with content type information
+ */
+export interface RouteData {
+  content: PageEntry;
+  content_type_uid: string;
+  template?: string; // Template from routing entry
+}
 
 /**
  * Fetch route data from Contentstack based on URL path
- * @param path - The URL path (e.g., "/", "/about", "/contact")
- * @returns PageEntry data or null if not found
+ *
+ * This function:
+ * 1. Queries the "routing" content type to find a route matching the URL path
+ * 2. Gets the content_type_uid and entry_uid from the routing entry
+ * 3. Fetches the actual content entry from the specified content type
+ *
+ * @param path - The URL path (e.g., "/blog/ai", "/about", "/contact")
+ * @returns RouteData with content and content_type_uid, or null if not found
  */
-export async function getRouteData(path: string): Promise<PageEntry | null> {
+export async function getRouteData(path: string): Promise<RouteData | null> {
   try {
     // Normalize path (ensure it starts with /)
+    // Handles both "blog/ai" and "/blog/ai" formats
     const normalizedPath = path.startsWith("/") ? path : `/${path}`;
 
     // Step 1: Find routing entry by URL path
@@ -45,7 +82,12 @@ export async function getRouteData(path: string): Promise<PageEntry | null> {
     const entryResult = await Entry.fetch();
     const pageData = entryResult as PageEntry;
 
-    return pageData;
+    // Return both content and content_type_uid so we can choose the right template
+    return {
+      content: pageData,
+      content_type_uid: routeData.content_type_uid,
+      template: routeData.template, // Template from routing entry
+    };
   } catch (error) {
     console.error("Error fetching route or page data:", error);
     return null;
