@@ -4,10 +4,7 @@ interface PageTemplateProps {
   entry: PageEntry;
 }
 
-/**
- * Standard page template - for regular pages like About, Contact, etc.
- * Simple, centered layout
- */
+
 export default function PageTemplate({ entry }: PageTemplateProps) {
   return (
     <main className="p-8 text-center">
