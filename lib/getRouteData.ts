@@ -12,7 +12,8 @@ export interface PageEntry {
 interface RoutingEntry {
   url_path: string;
   content_type_uid: string;
-  entry_uid: string;
+  entry_uid?: string;
+  entry_id?: string; // Some Contentstack setups use entry_id instead of entry_uid
   template?: string;
 }
 
@@ -55,15 +56,18 @@ export async function getRouteData(path: string): Promise<RouteData | null> {
 
     const routeData = entries[0] as RoutingEntry;
 
-    if (!routeData.content_type_uid || !routeData.entry_uid) {
+    // Support both entry_uid and entry_id field names
+    const entryUid = routeData.entry_uid || routeData.entry_id;
+
+    if (!routeData.content_type_uid || !entryUid) {
       console.error(
-        `Invalid routing entry for path ${normalizedPath}: missing content_type_uid or entry_uid`
+        `Invalid routing entry for path ${normalizedPath}: missing content_type_uid or entry_uid/entry_id`
       );
       return null;
     }
 
     const Entry = Stack.ContentType(routeData.content_type_uid)
-      .Entry(routeData.entry_uid)
+      .Entry(entryUid)
       .toJSON();
 
     const entryResult = await Entry.fetch();
