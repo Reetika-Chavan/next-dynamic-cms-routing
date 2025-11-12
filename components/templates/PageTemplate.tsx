@@ -15,7 +15,7 @@ export default function PageTemplate({ entry }: PageTemplateProps) {
         <img
           src={entry.image.url}
           alt={entry.title || "Page image"}
-          className="mx-auto w-64 h-auto mb-6 rounded-2xl shadow-lg shadow-purple-900/40 border border-purple-700/40"
+          className="mx-auto max-w-xs w-full h-auto mb-6 rounded-2xl shadow-lg shadow-purple-900/40 border border-purple-700/40"
         />
       )}
 

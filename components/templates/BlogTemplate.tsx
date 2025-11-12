@@ -25,7 +25,7 @@ export default function BlogTemplate({ entry }: BlogTemplateProps) {
 
       {/* Featured Image */}
       {entry.image?.url && (
-        <div className="max-w-4xl mx-auto mb-10">
+        <div className="max-w-sm mx-auto mb-10">
           <img
             src={entry.image.url}
             alt={entry.title || "Blog post image"}
@@ -44,9 +44,7 @@ export default function BlogTemplate({ entry }: BlogTemplateProps) {
         )}
 
         {entry.excerpt && (
-          <p className="text-lg text-purple-400 italic mt-6">
-            {entry.excerpt}
-          </p>
+          <p className="text-lg text-purple-400 italic mt-6">{entry.excerpt}</p>
         )}
       </div>
 
