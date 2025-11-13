@@ -9,7 +9,6 @@ interface PageProps {
   }>;
 }
 
-
 export default async function DynamicPage({ params }: PageProps) {
   const { slug } = await params;
 
