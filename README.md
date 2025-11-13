@@ -13,8 +13,6 @@ This project implements a fully dynamic routing system where:
 
 ## 🏗️ Architecture
 
-### Contentstack Approach vs. External Database
-
 This solution uses **Contentstack CMS to store routing data** instead of an external NoSQL database (like Google Cloud Firestore), providing:
 
 - ✅ **Lower latency** - Routing data served from Contentstack's edge locations (CDN)
@@ -139,31 +137,33 @@ Add your Contentstack environment variables in Launch:
 - `NEXT_PUBLIC_CONTENTSTACK_DELIVERY_TOKEN`
 - `NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT`
 
-### 4. Automated Redeployment
+### 4. Automated Cache Revalidation
 
-Once Launch is connected to your Contentstack stack, it automatically triggers redeployments when:
+Blog routes (`/blog/*`) are cached for optimal performance. When content changes occur, cache revalidation is triggered instead of full redeployments:
 
-- ✅ **Entry Published** → Automatic redeployment → New content is live
-- ✅ **Entry Updated** → Automatic redeployment → Updated content is live
-- ✅ **Entry Deleted** → Automatic redeployment → Page returns 404
-- ✅ **Entry Unpublished** → Automatic redeployment → Page returns 404
+- ✅ **Entry Published** → Cache revalidation → Updated content is live
+- ✅ **Entry Updated** → Cache revalidation → Updated content is live
+- ✅ **Entry Deleted** → Cache revalidation → Page returns 404
+- ✅ **Entry Unpublished** → Cache revalidation → Page returns 404
 
 #### How It Works
 
-- Launch is directly connected to your Contentstack stack
-- Launch monitors content changes in real-time
-- When any entry is published, updated, deleted, or unpublished, Launch automatically:
-  1. Detects the change
-  2. Triggers a new build
-  3. Deploys the updated application
-  4. Makes changes live
+- Blog routes are cached at both the Next.js data layer and CDN level
+- Cache headers are configured in `next.config.ts` for `/blog/*` routes
+- When content changes are detected, only the affected page's cache is revalidated
+- The cache revalidation process:
+  1. Detects the content change
+  2. Invalidates the cached data for that specific route
+  3. Next request triggers fresh data fetch
+  4. Updated content is served and cached again
 
 #### Benefits
 
-- ✅ **Fully automated** - No manual intervention needed
-- ✅ **Real-time updates** - Changes reflect immediately after deployment
-- ✅ **Seamless integration** - Direct connection between Launch and Contentstack
-- ✅ **Zero configuration** - Works automatically once connected
+- ✅ **Efficient updates** - Only affected pages are revalidated, not the entire application
+- ✅ **Fast performance** - Blog pages are cached for 1 year at CDN level
+- ✅ **Real-time updates** - Changes reflect immediately after cache revalidation
+- ✅ **Reduced build time** - No full redeployment needed for content updates
+- ✅ **Cost effective** - Less compute resources used compared to full redeployments
 
 ## 📁 Project Structure
 
@@ -187,6 +187,7 @@ Once Launch is connected to your Contentstack stack, it automatically triggers r
 - [Next.js on Contentstack Launch](https://www.contentstack.com/docs/developers/launch/nextjs-on-launch)
 - [Content Modeling](https://www.contentstack.com/docs/developers/create-content-types)
 - [Automation](https://www.contentstack.com/docs/developers/automation-hub-guides/get-started-with-automation-hub)
+- [Revalidate CDN Cache](https://www.contentstack.com/docs/developers/launch/revalidate-cdn-cache)
 
 ## 🐛 Troubleshooting
 
@@ -203,4 +204,3 @@ Once Launch is connected to your Contentstack stack, it automatically triggers r
 - **Verify entry UID**: Ensure `entry_uid` is correct and the entry exists
 
 ---
-

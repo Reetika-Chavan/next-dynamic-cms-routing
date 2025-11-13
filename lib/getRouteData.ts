@@ -13,7 +13,7 @@ interface RoutingEntry {
   url_path: string;
   content_type_uid: string;
   entry_uid?: string;
-  entry_id?: string; // Some Contentstack setups use entry_id instead of entry_uid
+  entry_id?: string;
   template?: string;
 }
 
@@ -28,7 +28,6 @@ export async function getRouteData(path: string): Promise<RouteData | null> {
     const normalizedPath = path.startsWith("/") ? path : `/${path}`;
     const pathWithoutSlash = normalizedPath.slice(1);
 
-    // Try with leading slash first, then without
     let Query = Stack.ContentType("routing")
       .Query()
       .where("url_path", normalizedPath)
@@ -56,7 +55,6 @@ export async function getRouteData(path: string): Promise<RouteData | null> {
 
     const routeData = entries[0] as RoutingEntry;
 
-    // Support both entry_uid and entry_id field names
     const entryUid = routeData.entry_uid || routeData.entry_id;
 
     if (!routeData.content_type_uid || !entryUid) {
